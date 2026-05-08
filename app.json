@@ -1,0 +1,61 @@
+{
+  "expo": {
+    "name": "Nalam — Your Wellness",
+    "slug": "nalam-wellness",
+    "version": "1.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": false,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0A3840"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nalam.wellness"
+    },
+    "android": {
+      "package": "com.nalam.wellness",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0A3840"
+      },
+      "permissions": [
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "SCHEDULE_EXACT_ALARM",
+        "POST_NOTIFICATIONS"
+      ],
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#D4A843",
+          "sounds": []
+        }
+      ],
+      "expo-font",
+      "expo-sqlite",
+      "expo-secure-store",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": false
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "822792c2-7682-415c-82a2-3f324b38dff8"
+      }
+    }
+  }
+}
