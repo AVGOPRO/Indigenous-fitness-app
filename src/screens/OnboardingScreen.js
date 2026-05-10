@@ -147,6 +147,7 @@ const OnboardingScreen = ({ navigation }) => {
       activityLevel:      form.activityLevel,
       calorieGoal:        HealthService.calculateCalorieGoal(tdee, form.gender),
       waterGoalGlasses:   HealthService.waterGoalGlasses(parseFloat(form.startWeight)),
+      onboardingDate:     new Date().toISOString(),
       onboardingComplete: true,
     });
   };
@@ -163,6 +164,7 @@ const OnboardingScreen = ({ navigation }) => {
   const weeks = form.startWeight && form.targetWeight &&
                 parseFloat(form.targetWeight) < parseFloat(form.startWeight)
     ? HealthService.estimateWeeksToGoal(parseFloat(form.startWeight), parseFloat(form.targetWeight)) : 0;
+  const duration = HealthService.formatDuration(weeks);
   const bmiCat = bmi ? HealthService.getBMICategory(bmi) : null;
 
   // Live name length counter for step 1
@@ -224,7 +226,7 @@ const OnboardingScreen = ({ navigation }) => {
                 </View>
                 <TextInput
                   style={styles.input}
-                  placeholder="e.g. Priya"
+                  placeholder="e.g. Shilpa Arvind"
                   placeholderTextColor={Colors.textMuted}
                   value={form.name}
                   maxLength={RULES.name.maxLen}
@@ -239,7 +241,7 @@ const OnboardingScreen = ({ navigation }) => {
                 <Text style={styles.label}>Age</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder={`e.g. 28 (${RULES.age.min}–${RULES.age.max} years)`}
+                  placeholder="e.g. 29"
                   placeholderTextColor={Colors.textMuted}
                   keyboardType="numeric"
                   value={form.age}
@@ -269,7 +271,7 @@ const OnboardingScreen = ({ navigation }) => {
                 <Text style={styles.label}>Height (cm)</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder={`e.g. 165 (${RULES.height.min}–${RULES.height.max} cm)`}
+                  placeholder="e.g. 165"
                   placeholderTextColor={Colors.textMuted}
                   keyboardType="numeric"
                   value={form.heightCm}
@@ -281,7 +283,7 @@ const OnboardingScreen = ({ navigation }) => {
                 <Text style={styles.label}>Current Weight (kg)</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder={`e.g. 85 (${RULES.weight.min}–${RULES.weight.max} kg)`}
+                  placeholder="e.g. 85"
                   placeholderTextColor={Colors.textMuted}
                   keyboardType="numeric"
                   value={form.startWeight}
@@ -311,7 +313,7 @@ const OnboardingScreen = ({ navigation }) => {
                 <Text style={styles.label}>Target Weight (kg)</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder={`e.g. 70 (must be below ${form.startWeight || '—'} kg)`}
+                  placeholder="e.g. 70"
                   placeholderTextColor={Colors.textMuted}
                   keyboardType="numeric"
                   value={form.targetWeight}
@@ -336,8 +338,11 @@ const OnboardingScreen = ({ navigation }) => {
                     <Text style={styles.calcText}>
                       Estimated time:{' '}
                       <Text style={{ fontWeight: FontWeight.bold, color: Colors.primary }}>
-                        ~{weeks} weeks at 0.5 kg/week
+                        {duration.label}
                       </Text>
+                    </Text>
+                    <Text style={[styles.calcText, { marginTop: 6, fontStyle: 'italic', color: Colors.accent }]}>
+                      💪 Exercises get harder week by week — and that's exactly what makes it work!
                     </Text>
                   </View>
                 )}
@@ -384,8 +389,10 @@ const OnboardingScreen = ({ navigation }) => {
                   { label: '🎯 Daily Calorie Goal',  value: `${calorieGoal} kcal` },
                   { label: '💧 Daily Water Goal',    value: `${HealthService.waterGoalGlasses(parseFloat(form.startWeight))} glasses` },
                   { label: '📊 Current BMI',         value: `${bmi} (${bmiCat?.label})` },
-                  { label: '⏱️ Estimated Duration',  value: `~${weeks} weeks` },
+                  { label: '⏱️ Estimated Duration',  value: duration.label },
+                  { label: '📅 Total Weeks',         value: `~${weeks} weeks` },
                   { label: '📉 To Lose',             value: `${(parseFloat(form.startWeight) - parseFloat(form.targetWeight)).toFixed(1)} kg` },
+                  { label: '🔥 Training Phases',     value: 'Beginner → Intermediate → Advanced' },
                 ].map((item, i) => (
                   <View key={i} style={styles.summaryRow}>
                     <Text style={styles.summaryLabel}>{item.label}</Text>
@@ -393,7 +400,7 @@ const OnboardingScreen = ({ navigation }) => {
                   </View>
                 ))}
                 <Text style={styles.summaryNote}>
-                  Your journey is uniquely yours. Nalam will guide you every step of the way. 🙏
+                  Your exercises get harder every 4 weeks — that's your body growing stronger. Nalam will guide you every step of the way. 🙏
                 </Text>
               </View>
             )}

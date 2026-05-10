@@ -72,13 +72,44 @@ export const HealthService = {
   },
 
   /**
-   * Estimate weeks to reach target weight
-   * ~0.5 kg/week with 500 kcal deficit
+   * Estimate weeks using tiered pace:
+   * Weeks 1-4: 0.5 kg/week (adaptation)
+   * Weeks 5-12: 0.75 kg/week (building)
+   * Weeks 13+: 1.0 kg/week (peak)
    */
   estimateWeeksToGoal(currentWeight, targetWeight) {
-    const weightToLose = currentWeight - targetWeight;
-    if (weightToLose <= 0) return 0;
-    return Math.ceil(weightToLose / 0.5);
+    const total = currentWeight - targetWeight;
+    if (total <= 0) return 0;
+    let remaining = total;
+    let weeks = 0;
+    // Phase 1: 4 weeks × 0.5 kg
+    const p1 = Math.min(remaining, 4 * 0.5);
+    weeks += Math.ceil(p1 / 0.5);
+    remaining -= p1;
+    if (remaining <= 0) return weeks;
+    // Phase 2: 8 weeks × 0.75 kg
+    const p2 = Math.min(remaining, 8 * 0.75);
+    weeks += Math.ceil(p2 / 0.75);
+    remaining -= p2;
+    if (remaining <= 0) return weeks;
+    // Phase 3: rest at 1.0 kg/week
+    weeks += Math.ceil(remaining / 1.0);
+    return weeks;
+  },
+
+  /**
+   * Format weeks into human-readable label
+   * e.g. 53 → { weeks: 53, months: 13, label: '~13 months' }
+   */
+  formatDuration(weeks) {
+    if (!weeks || weeks <= 0) return { weeks: 0, months: 0, label: '—' };
+    const months = Math.round(weeks / 4.33);
+    if (months < 2) return { weeks, months, label: `~${weeks} weeks` };
+    if (months < 24) return { weeks, months, label: `~${months} months` };
+    const years = Math.floor(months / 12);
+    const rem = months % 12;
+    const label = rem > 0 ? `~${years} yr ${rem} mo` : `~${years} years`;
+    return { weeks, months, label };
   },
 
   /**

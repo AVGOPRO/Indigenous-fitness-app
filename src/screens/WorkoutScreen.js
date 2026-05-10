@@ -21,6 +21,7 @@ const WorkoutScreen = () => {
   const {
     todayWorkout, isCompleted, streak, loadTodayWorkout,
     completeWorkout, isTodayRestDay, todayDayName, getWeeklyPlan,
+    currentWeek, getPhaseMeta,
   } = useWorkoutStore();
   const profile = useUserStore(s => s.profile);
 
@@ -58,6 +59,7 @@ const WorkoutScreen = () => {
 
   const weeklyPlan = getWeeklyPlan();
   const isRestDay = isTodayRestDay();
+  const phase = getPhaseMeta();
 
   const dayDisplayNames = {
     monday: 'MON', tuesday: 'TUE', wednesday: 'WED',
@@ -69,7 +71,12 @@ const WorkoutScreen = () => {
     <ScrollView style={styles.screen}>
       {/* Header */}
       <LinearGradient colors={Colors.gradientMaroon} style={styles.header}>
-        <Text style={styles.headerTitle}>💪 Workout</Text>
+        <View style={styles.headerTop}>
+          <Text style={styles.headerTitle}>💪 Workout</Text>
+          <View style={styles.weekBadge}>
+            <Text style={styles.weekBadgeText}>{phase.emoji} Week {currentWeek} · {phase.label}</Text>
+          </View>
+        </View>
         <View style={styles.headerMeta}>
           <View style={styles.metaItem}>
             <Text style={styles.metaVal}>{streak}</Text>
@@ -79,7 +86,7 @@ const WorkoutScreen = () => {
             <>
               <View style={styles.metaDivider} />
               <View style={styles.metaItem}>
-                <Text style={styles.metaVal}>{todayWorkout.totalTime || 30}m</Text>
+                <Text style={styles.metaVal}>{todayWorkout.totalTime || 45}m</Text>
                 <Text style={styles.metaLabel}>Duration</Text>
               </View>
               <View style={styles.metaDivider} />
@@ -93,6 +100,13 @@ const WorkoutScreen = () => {
       </LinearGradient>
 
       <View style={styles.content}>
+        {/* Level-up banner */}
+        {phase.message && (
+          <View style={styles.levelUpBanner}>
+            <Text style={styles.levelUpText}>{phase.message}</Text>
+          </View>
+        )}
+
         {/* Tabs */}
         <View style={styles.tabs}>
           {['today', 'week'].map(tab => (
@@ -319,7 +333,12 @@ const WorkoutScreen = () => {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: Colors.background },
   header: { paddingTop: 56, paddingHorizontal: Spacing.base, paddingBottom: Spacing.xl },
-  headerTitle: { fontSize: FontSize.xl, fontWeight: FontWeight.bold, color: Colors.white, marginBottom: Spacing.md },
+  headerTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.sm },
+  headerTitle: { fontSize: FontSize.xl, fontWeight: FontWeight.bold, color: Colors.white },
+  weekBadge: { backgroundColor: Colors.white + '25', borderRadius: Radius.full, paddingHorizontal: Spacing.md, paddingVertical: 4 },
+  weekBadgeText: { fontSize: FontSize.xs, fontWeight: FontWeight.bold, color: Colors.white },
+  levelUpBanner: { backgroundColor: Colors.accent + '20', borderLeftWidth: 4, borderLeftColor: Colors.accent, borderRadius: Radius.md, padding: Spacing.md, marginBottom: Spacing.md },
+  levelUpText: { fontSize: FontSize.sm, color: Colors.accent, fontWeight: FontWeight.semiBold, lineHeight: 20 },
   headerMeta: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
   metaItem: { alignItems: 'center' },
   metaVal: { fontSize: FontSize.xl, fontWeight: FontWeight.extraBold, color: Colors.white },
